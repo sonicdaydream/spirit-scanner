@@ -620,7 +620,7 @@
             updateDisplay(magneticStrength, accelStrength, randomValue, anomalyLevel);
             updateWaveform(anomalyLevel);
 
-            const threshold = [80, 65, 45][sensitivityLevel];
+            const threshold = [85, 75, 55][sensitivityLevel];
             if (anomalyLevel > threshold) {
                 triggerAnomaly(anomalyLevel);
             }
