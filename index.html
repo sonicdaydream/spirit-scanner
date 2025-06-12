@@ -526,22 +526,6 @@
             if (isScanning) return;
 
             try {
-                if (typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function') {
-                    const permission = await DeviceOrientationEvent.requestPermission();
-                    if (permission !== 'granted') {
-                        logMessage('センサーアクセスが拒否されました', true);
-                        return;
-                    }
-                }
-
-                if (typeof DeviceMotionEvent !== 'undefined' && typeof DeviceMotionEvent.requestPermission === 'function') {
-                    const permission = await DeviceMotionEvent.requestPermission();
-                    if (permission !== 'granted') {
-                        logMessage('加速度センサーアクセスが拒否されました', true);
-                        return;
-                    }
-                }
-
                 isScanning = true;
                 startTime = Date.now();
                 document.getElementById('permissionNote').style.display = 'none';
@@ -550,8 +534,10 @@
 
                 logMessage('👻 霊的エネルギースキャン開始');
 
-                window.addEventListener('deviceorientation', handleOrientation);
-                window.addEventListener('devicemotion', handleMotion);
+                // センサーイベントリスナーは登録しない（純粋乱数モード）
+                // window.addEventListener('deviceorientation', handleOrientation);
+                // window.addEventListener('devicemotion', handleMotion);
+                
                 scanInterval = setInterval(performScan, 100);
 
             } catch (error) {
@@ -567,8 +553,9 @@
             document.getElementById('startBtn').style.display = 'inline-block';
             document.getElementById('stopBtn').style.display = 'none';
 
-            window.removeEventListener('deviceorientation', handleOrientation);
-            window.removeEventListener('devicemotion', handleMotion);
+            // センサーイベントリスナーは使用していないのでコメントアウト
+            // window.removeEventListener('deviceorientation', handleOrientation);
+            // window.removeEventListener('devicemotion', handleMotion);
 
             logMessage('👻 スキャン停止');
         }
