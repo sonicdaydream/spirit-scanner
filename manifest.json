@@ -1,0 +1,42 @@
+{
+  "name": "スピリットスキャナー",
+  "short_name": "Spirit Scanner",
+  "description": "霊的エネルギーと異常な磁場を検出するデジタルツール",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#1a1a2e",
+  "theme_color": "#00ff88",
+  "orientation": "portrait",
+  "scope": "/",
+  "lang": "ja",
+  "dir": "ltr",
+  "categories": ["entertainment", "utilities"],
+  "icons": [
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "クイックスキャン",
+      "short_name": "スキャン",
+      "description": "霊的エネルギーの即座スキャンを開始",
+      "url": "/?quick=true",
+      "icons": [
+        {
+          "src": "icon-192.png",
+          "sizes": "192x192"
+        }
+      ]
+    }
+  ]
+}

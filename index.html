@@ -1,0 +1,804 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#00ff88">
+    <meta name="description" content="霊的エネルギーと異常な磁場を検出するデジタルツール">
+    <meta name="keywords" content="霊,スピリット,バケタン,オカルト,心霊,異常検知">
+    <meta name="author" content="Spirit Scanner Team">
+    
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="/manifest.json">
+    
+    <!-- iOS Safari対応 -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Spirit Scanner">
+    <link rel="apple-touch-icon" href="/icon-192.png">
+    
+    <!-- アイコン設定 -->
+    <link rel="icon" type="image/png" sizes="192x192" href="/icon-192.png">
+    <link rel="icon" type="image/png" sizes="512x512" href="/icon-512.png">
+    
+    <title>スピリットスキャナー</title>
+    
+    <!-- Google AdSense -->
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1626421381756721"
+         crossorigin="anonymous"></script>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            margin: 0;
+            padding: 10px;
+            min-height: 100vh;
+            color: #00ff88;
+            overflow-x: hidden;
+            user-select: none;
+            -webkit-user-select: none;
+            -webkit-touch-callout: none;
+        }
+
+        .container {
+            background: rgba(0, 20, 40, 0.8);
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(0, 255, 136, 0.3);
+            border-radius: 15px;
+            padding: 15px;
+            box-shadow: 0 0 30px rgba(0, 255, 136, 0.2);
+            max-width: 100%;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .ad-banner {
+            width: 100%;
+            height: 50px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px dashed rgba(255, 255, 255, 0.3);
+            border-radius: 5px;
+            margin: 10px 0 15px 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 0.8em;
+            font-style: italic;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 15px;
+            font-size: 1.4em;
+            text-shadow: 0 0 20px rgba(0, 255, 136, 0.8);
+            animation: glow 2s ease-in-out infinite alternate;
+            white-space: nowrap;
+        }
+
+        @keyframes glow {
+            from { text-shadow: 0 0 20px rgba(0, 255, 136, 0.8); }
+            to { text-shadow: 0 0 30px rgba(0, 255, 136, 1), 0 0 40px rgba(0, 255, 136, 0.8); }
+        }
+
+        .status-panel {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin: 15px 0;
+        }
+
+        .sensor-card {
+            background: rgba(0, 40, 80, 0.6);
+            border: 1px solid rgba(0, 255, 136, 0.5);
+            border-radius: 10px;
+            padding: 12px;
+            text-align: center;
+        }
+
+        .sensor-title {
+            font-size: 0.9em;
+            margin-bottom: 10px;
+            color: #88ffaa;
+        }
+
+        .sensor-value {
+            font-size: 1.5em;
+            font-weight: bold;
+            margin: 5px 0;
+        }
+
+        .anomaly-meter {
+            width: 100%;
+            height: 60px;
+            background: rgba(0, 20, 40, 0.8);
+            border: 2px solid rgba(0, 255, 136, 0.5);
+            border-radius: 10px;
+            margin: 15px 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .meter-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #00ff88, #ffaa00, #ff4444);
+            width: 0%;
+            transition: width 0.3s ease;
+            position: relative;
+        }
+
+        .meter-label {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-weight: bold;
+            z-index: 10;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.8);
+        }
+
+        .waveform {
+            width: 100%;
+            height: 120px;
+            background: rgba(0, 20, 40, 0.8);
+            border: 2px solid rgba(0, 255, 136, 0.5);
+            border-radius: 10px;
+            margin: 15px 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .wave-line {
+            stroke: #00ff88;
+            stroke-width: 2;
+            fill: none;
+            filter: drop-shadow(0 0 5px rgba(0, 255, 136, 0.8));
+        }
+
+        .control-panel {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            margin: 10px 0;
+        }
+
+        .btn {
+            padding: 12px 8px;
+            border: 2px solid rgba(0, 255, 136, 0.5);
+            background: rgba(0, 40, 80, 0.6);
+            color: #00ff88;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: bold;
+            font-size: 0.85em;
+            text-align: center;
+            touch-action: manipulation;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .btn:hover {
+            background: rgba(0, 255, 136, 0.2);
+            box-shadow: 0 0 15px rgba(0, 255, 136, 0.5);
+        }
+
+        .btn.active {
+            background: rgba(0, 255, 136, 0.3);
+            box-shadow: 0 0 20px rgba(0, 255, 136, 0.8);
+        }
+
+        .alert {
+            background: rgba(255, 68, 68, 0.2);
+            border: 2px solid #ff4444;
+            border-radius: 10px;
+            padding: 15px;
+            margin: 20px 0;
+            text-align: center;
+            font-weight: bold;
+            animation: pulse 1s infinite;
+            display: none;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.8; transform: scale(1.02); }
+            100% { opacity: 1; transform: scale(1); }
+        }
+
+        .log {
+            background: rgba(0, 20, 40, 0.6);
+            border: 1px solid rgba(0, 255, 136, 0.3);
+            border-radius: 10px;
+            padding: 12px;
+            height: 150px;
+            overflow-y: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 0.75em;
+            line-height: 1.3;
+        }
+
+        .log-entry {
+            margin: 2px 0;
+            opacity: 0.8;
+        }
+
+        .log-anomaly {
+            color: #ff4444;
+            font-weight: bold;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin: 15px 0;
+        }
+
+        .stat-item {
+            background: rgba(0, 40, 80, 0.4);
+            border: 1px solid rgba(0, 255, 136, 0.3);
+            border-radius: 8px;
+            padding: 8px;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 1.3em;
+            font-weight: bold;
+            color: #ffaa00;
+        }
+
+        .permission-note {
+            background: rgba(255, 170, 0, 0.2);
+            border: 1px solid #ffaa00;
+            border-radius: 10px;
+            padding: 12px;
+            margin: 10px 0;
+            text-align: center;
+            color: #ffaa00;
+            font-size: 0.9em;
+        }
+
+        .help-panel {
+            background: rgba(0, 40, 80, 0.8);
+            border: 2px solid rgba(0, 255, 136, 0.5);
+            border-radius: 15px;
+            padding: 15px;
+            margin: 15px 0;
+            display: none;
+            max-height: 300px;
+            overflow-y: auto;
+            font-size: 0.9em;
+        }
+
+        .help-section {
+            margin: 15px 0;
+            padding: 10px;
+            border-left: 3px solid #00ff88;
+            padding-left: 15px;
+        }
+
+        .help-title {
+            color: #ffaa00;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .notification-panel {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: rgba(255, 68, 68, 0.9);
+            border: 2px solid #ff4444;
+            border-radius: 10px;
+            padding: 15px;
+            color: white;
+            font-weight: bold;
+            z-index: 1000;
+            display: none;
+            animation: slideIn 0.5s ease;
+            max-width: 300px;
+        }
+
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        .log-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .log-export-btn {
+            padding: 6px 12px;
+            border: 1px solid rgba(0, 255, 136, 0.5);
+            background: rgba(0, 40, 80, 0.4);
+            color: #00ff88;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: bold;
+            font-size: 0.8em;
+            touch-action: manipulation;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .log-export-btn:hover {
+            background: rgba(0, 255, 136, 0.2);
+            box-shadow: 0 0 10px rgba(0, 255, 136, 0.3);
+        }
+
+        /* スマホ最適化 */
+        * {
+            box-sizing: border-box;
+        }
+    </style>
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>👻 スピリットスキャナー</h1>
+        
+        <!-- アドセンス広告エリア -->
+        <div class="ad-banner" id="adBanner">
+            <!-- スピリットスキャナー -->
+            <ins class="adsbygoogle"
+                 style="display:inline-block;width:320px;height:50px"
+                 data-ad-client="ca-pub-1626421381756721"
+                 data-ad-slot="1032064344"></ins>
+        </div>
+        
+        <div class="permission-note" id="permissionNote">
+            📱 センサーアクセス許可が必要です。「開始」ボタンを押してください
+        </div>
+
+        <div class="control-panel">
+            <button class="btn" id="startBtn" onclick="startScanning()">🔍 スキャン開始</button>
+            <button class="btn" id="stopBtn" onclick="stopScanning()" style="display:none;">⏹️ 停止</button>
+            <button class="btn" onclick="resetData()">🔄 リセット</button>
+            <button class="btn" onclick="toggleSensitivity()">⚙️ 感度調整</button>
+            <button class="btn" onclick="toggleHelp()">❓ ヘルプ</button>
+            <div></div> <!-- 空のセルでバランス調整 -->
+        </div>
+
+        <div class="help-panel" id="helpPanel">
+            <h3 style="color: #ffaa00; text-align: center;">👻 スピリットスキャナー 使用方法</h3>
+            
+            <div class="help-section">
+                <div class="help-title">🎯 基本的な使い方</div>
+                <div>1. 「スキャン開始」ボタンを押してセンサー許可を与える<br>
+                2. アプリが自動的に環境のベースライン（基準値）を測定<br>
+                3. 異常な磁場やエネルギーを検出すると自動でアラート<br>
+                4. 感度調整で検出レベルを変更可能（低・中・高）</div>
+            </div>
+
+            <div class="help-section">
+                <div class="help-title">👁️ 監視対象</div>
+                <div>• <strong>磁気フィールド:</strong> 霊的存在による磁場の乱れ<br>
+                • <strong>振動パターン:</strong> 超自然現象による微細な震動<br>
+                • <strong>量子乱数:</strong> 意識エネルギーによる確率の歪み<br>
+                • <strong>総合エネルギー:</strong> 複数要素の統合分析</div>
+            </div>
+
+            <div class="help-section">
+                <div class="help-title">🕵️ 効果的な使用場所</div>
+                <div>• 古い建物や歴史的な場所<br>
+                • 心霊スポットや噂のある場所<br>
+                • 違和感を感じる空間<br>
+                • 電磁波の少ない静かな環境<br>
+                • 夜間や薄明の時間帯</div>
+            </div>
+
+            <div class="help-section">
+                <div class="help-title">⚠️ 検出時の対処法</div>
+                <div>• 異常検出時は冷静に周囲を観察<br>
+                • スマホを少し移動させて再測定<br>
+                • 電子機器の影響も考慮する<br>
+                • 記録として時刻と場所をメモ<br>
+                • 連続検出時は場所を変えることを推奨</div>
+            </div>
+        </div>
+
+        <div class="notification-panel" id="notificationPanel">
+            🚨 異常エネルギーを検出！
+        </div>
+
+        <div class="anomaly-meter">
+            <div class="meter-fill" id="anomalyMeter"></div>
+            <div class="meter-label" id="meterLabel">異常度: 0%</div>
+        </div>
+
+        <div class="alert" id="alertPanel">
+            ⚠️ 異常な磁場変動を検出しました！
+        </div>
+
+        <div class="status-panel">
+            <div class="sensor-card">
+                <div class="sensor-title">エネルギーレベル</div>
+                <div class="sensor-value" id="energyValue">0%</div>
+                <div style="font-size:0.8em;" id="energyStatus">待機中</div>
+            </div>
+            <div class="sensor-card">
+                <div class="sensor-title">異常度</div>
+                <div class="sensor-value" id="anomalyValue">0%</div>
+                <div style="font-size:0.8em;" id="anomalyStatus">正常</div>
+            </div>
+            <div class="sensor-card">
+                <div class="sensor-title">量子乱数偏差</div>
+                <div class="sensor-value" id="randomValue">0.0</div>
+                <div style="font-size:0.8em;" id="randomStatus">正常</div>
+            </div>
+            <div class="sensor-card">
+                <div class="sensor-title">活動強度</div>
+                <div class="sensor-value" id="activityValue">低</div>
+                <div style="font-size:0.8em;" id="activityStatus">監視中</div>
+            </div>
+        </div>
+
+        <div class="waveform">
+            <svg width="100%" height="100%" id="waveformSvg">
+                <polyline class="wave-line" id="waveLine" points=""></polyline>
+            </svg>
+        </div>
+
+        <div class="stats">
+            <div class="stat-item">
+                <div>スキャン時間</div>
+                <div class="stat-value" id="scanTime">0秒</div>
+            </div>
+            <div class="stat-item">
+                <div>検出回数</div>
+                <div class="stat-value" id="detectionCount">0回</div>
+            </div>
+            <div class="stat-item">
+                <div>最大異常度</div>
+                <div class="stat-value" id="maxAnomaly">0%</div>
+            </div>
+            <div class="stat-item">
+                <div>感度レベル</div>
+                <div class="stat-value" id="sensitivityLevel">中</div>
+            </div>
+        </div>
+
+        <div>
+            <div class="log-header">
+                <h3>📊 スキャンログ</h3>
+                <button class="log-export-btn" onclick="exportLog()">📄 ログ出力</button>
+            </div>
+            <div class="log" id="scanLog">
+                <div class="log-entry">システム起動完了</div>
+                <div class="log-entry">センサー初期化待機中...</div>
+            </div>
+        </div>
+    </div>
+    </div>
+
+    <script>
+        let isScanning = false;
+        let scanInterval;
+        let startTime;
+        let detectionCount = 0;
+        let maxAnomalyLevel = 0;
+        let sensitivityLevel = 1;
+        let waveformData = [];
+        let baselineMagnetic = 0;
+        let baselineAccel = 0;
+        let magneticData = { x: 0, y: 0, z: 0 };
+        let accelData = { x: 0, y: 0, z: 0 };
+        let detailedLog = []; // 詳細ログ用配列
+
+        function logMessage(message, isAnomaly = false) {
+            const log = document.getElementById('scanLog');
+            const entry = document.createElement('div');
+            entry.className = isAnomaly ? 'log-entry log-anomaly' : 'log-entry';
+            const timestamp = new Date().toLocaleTimeString();
+            const fullMessage = `[${timestamp}] ${message}`;
+            entry.textContent = fullMessage;
+            log.insertBefore(entry, log.firstChild);
+            
+            // 詳細ログにも保存（日時含む）
+            const detailedEntry = {
+                timestamp: new Date().toISOString(),
+                message: message,
+                isAnomaly: isAnomaly,
+                displayTime: timestamp
+            };
+            detailedLog.unshift(detailedEntry);
+            
+            // 表示ログの制限
+            while (log.children.length > 50) {
+                log.removeChild(log.lastChild);
+            }
+            
+            // 詳細ログの制限（より多く保存）
+            if (detailedLog.length > 1000) {
+                detailedLog.pop();
+            }
+        }
+
+        async function startScanning() {
+            if (isScanning) return;
+
+            try {
+                if (typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function') {
+                    const permission = await DeviceOrientationEvent.requestPermission();
+                    if (permission !== 'granted') {
+                        logMessage('センサーアクセスが拒否されました', true);
+                        return;
+                    }
+                }
+
+                if (typeof DeviceMotionEvent !== 'undefined' && typeof DeviceMotionEvent.requestPermission === 'function') {
+                    const permission = await DeviceMotionEvent.requestPermission();
+                    if (permission !== 'granted') {
+                        logMessage('加速度センサーアクセスが拒否されました', true);
+                        return;
+                    }
+                }
+
+                isScanning = true;
+                startTime = Date.now();
+                document.getElementById('permissionNote').style.display = 'none';
+                document.getElementById('startBtn').style.display = 'none';
+                document.getElementById('stopBtn').style.display = 'inline-block';
+
+                logMessage('👻 霊的エネルギースキャン開始');
+
+                window.addEventListener('deviceorientation', handleOrientation);
+                window.addEventListener('devicemotion', handleMotion);
+                scanInterval = setInterval(performScan, 100);
+
+            } catch (error) {
+                logMessage(`エラー: ${error.message}`, true);
+                isScanning = false;
+            }
+        }
+
+        function stopScanning() {
+            isScanning = false;
+            clearInterval(scanInterval);
+            
+            document.getElementById('startBtn').style.display = 'inline-block';
+            document.getElementById('stopBtn').style.display = 'none';
+
+            window.removeEventListener('deviceorientation', handleOrientation);
+            window.removeEventListener('devicemotion', handleMotion);
+
+            logMessage('👻 スキャン停止');
+        }
+
+        function handleOrientation(event) {
+            const alpha = event.alpha || 0;
+            const beta = event.beta || 0;
+            const gamma = event.gamma || 0;
+
+            magneticData.x = Math.sin(alpha * Math.PI / 180) * 50;
+            magneticData.y = Math.sin(beta * Math.PI / 180) * 50;
+            magneticData.z = Math.sin(gamma * Math.PI / 180) * 50;
+        }
+
+        function handleMotion(event) {
+            if (event.acceleration) {
+                accelData.x = event.acceleration.x || 0;
+                accelData.y = event.acceleration.y || 0;
+                accelData.z = event.acceleration.z || 0;
+            }
+        }
+
+        function performScan() {
+            if (!isScanning) return;
+
+            const magneticStrength = Math.sqrt(magneticData.x ** 2 + magneticData.y ** 2 + magneticData.z ** 2);
+            const accelStrength = Math.sqrt(accelData.x ** 2 + accelData.y ** 2 + accelData.z ** 2);
+
+            const elapsed = (Date.now() - startTime) / 1000;
+            if (elapsed < 3) {
+                baselineMagnetic = (baselineMagnetic * 0.9) + (magneticStrength * 0.1);
+                baselineAccel = (baselineAccel * 0.9) + (accelStrength * 0.1);
+            }
+
+            const magneticDeviation = Math.abs(magneticStrength - baselineMagnetic);
+            const magneticAnomaly = Math.min(magneticDeviation / (baselineMagnetic + 1) * 100, 100);
+
+            const accelDeviation = Math.abs(accelStrength - baselineAccel);
+            const accelAnomaly = Math.min(accelDeviation / (baselineAccel + 1) * 100, 100);
+
+            const randomValue = Math.random();
+            const randomAnomaly = Math.abs(randomValue - 0.5) * 200;
+
+            let anomalyLevel = (magneticAnomaly + accelAnomaly + randomAnomaly) / 3;
+            const sensitivityMultiplier = [0.5, 1.0, 2.0][sensitivityLevel];
+            anomalyLevel *= sensitivityMultiplier;
+            anomalyLevel = Math.min(anomalyLevel, 100);
+
+            updateDisplay(magneticStrength, accelStrength, randomValue, anomalyLevel);
+            updateWaveform(anomalyLevel);
+
+            const threshold = [70, 50, 35][sensitivityLevel];
+            if (anomalyLevel > threshold) {
+                triggerAnomaly(anomalyLevel);
+            }
+
+            updateStats(elapsed, anomalyLevel);
+        }
+
+        function updateDisplay(magnetic, accel, random, anomaly) {
+            // エネルギーレベル（全体的な活動度）
+            const energyLevel = Math.min(anomaly * 1.2, 100);
+            document.getElementById('energyValue').textContent = `${energyLevel.toFixed(0)}%`;
+            
+            // 異常度
+            document.getElementById('anomalyValue').textContent = `${anomaly.toFixed(1)}%`;
+            
+            // 量子乱数偏差
+            document.getElementById('randomValue').textContent = random.toFixed(3);
+            
+            // 活動強度
+            const activityLevel = anomaly < 20 ? '低' : anomaly < 50 ? '中' : anomaly < 80 ? '高' : '極高';
+            document.getElementById('activityValue').textContent = activityLevel;
+
+            // 異常度メーター
+            const meter = document.getElementById('anomalyMeter');
+            const label = document.getElementById('meterLabel');
+            meter.style.width = `${anomaly}%`;
+            label.textContent = `異常度: ${anomaly.toFixed(1)}%`;
+
+            // ステータス更新
+            document.getElementById('energyStatus').textContent = energyLevel > 60 ? '高エネルギー' : '正常';
+            document.getElementById('anomalyStatus').textContent = anomaly > 50 ? '警戒' : '正常';
+            document.getElementById('randomStatus').textContent = Math.abs(random - 0.5) * 100 > 30 ? '偏差あり' : '正常';
+            document.getElementById('activityStatus').textContent = isScanning ? '監視中' : '待機中';
+        }
+
+        function updateWaveform(anomalyLevel) {
+            waveformData.push(anomalyLevel);
+            if (waveformData.length > 100) {
+                waveformData.shift();
+            }
+
+            const svg = document.getElementById('waveformSvg');
+            const svgRect = svg.getBoundingClientRect();
+            const width = svgRect.width;
+            const height = svgRect.height;
+
+            let points = '';
+            for (let i = 0; i < waveformData.length; i++) {
+                const x = (i / (waveformData.length - 1)) * width;
+                const y = height - (waveformData[i] / 100) * height;
+                points += `${x},${y} `;
+            }
+
+            document.getElementById('waveLine').setAttribute('points', points.trim());
+        }
+
+        function triggerAnomaly(level) {
+            detectionCount++;
+            
+            const alert = document.getElementById('alertPanel');
+            alert.style.display = 'block';
+            setTimeout(() => alert.style.display = 'none', 3000);
+
+            const notification = document.getElementById('notificationPanel');
+            notification.style.display = 'block';
+            notification.innerHTML = `🚨 異常エネルギー検出！<br>レベル: ${level.toFixed(1)}%`;
+            setTimeout(() => notification.style.display = 'none', 4000);
+
+            if (navigator.vibrate) {
+                navigator.vibrate([200, 100, 200, 100, 200]);
+            }
+
+            logMessage(`👻 霊的エネルギー検出! レベル: ${level.toFixed(1)}%`, true);
+        }
+
+        function updateStats(elapsed, anomaly) {
+            document.getElementById('scanTime').textContent = `${Math.floor(elapsed)}秒`;
+            document.getElementById('detectionCount').textContent = `${detectionCount}回`;
+            
+            if (anomaly > maxAnomalyLevel) {
+                maxAnomalyLevel = anomaly;
+                document.getElementById('maxAnomaly').textContent = `${maxAnomalyLevel.toFixed(1)}%`;
+            }
+        }
+
+        function resetData() {
+            detectionCount = 0;
+            maxAnomalyLevel = 0;
+            waveformData = [];
+            baselineMagnetic = 0;
+            baselineAccel = 0;
+            detailedLog = []; // 詳細ログもリセット
+            
+            document.getElementById('scanLog').innerHTML = '<div class="log-entry">👻 データリセット完了</div>';
+            document.getElementById('waveLine').setAttribute('points', '');
+            
+            logMessage('📊 全データをリセットしました');
+        }
+
+        function toggleSensitivity() {
+            sensitivityLevel = (sensitivityLevel + 1) % 3;
+            const levels = ['低', '中', '高'];
+            document.getElementById('sensitivityLevel').textContent = levels[sensitivityLevel];
+            logMessage(`感度を${levels[sensitivityLevel]}に変更`);
+        }
+
+        function toggleHelp() {
+            const helpPanel = document.getElementById('helpPanel');
+            const isVisible = helpPanel.style.display === 'block';
+            helpPanel.style.display = isVisible ? 'none' : 'block';
+        }
+
+        function exportLog() {
+            try {
+                if (detailedLog.length === 0) {
+                    alert('📝 出力できるログがありません。まずスキャンを開始してください。');
+                    return;
+                }
+
+                // セッション情報の取得
+                const currentTime = Date.now();
+                const sessionDuration = startTime ? Math.floor((currentTime - startTime) / 1000) : 0;
+
+                // テキスト形式でログを生成
+                let logText = '============================================\n';
+                logText += '👻 スピリットスキャナー 検証ログ\n';
+                logText += '============================================\n\n';
+                
+                logText += '📊 セッション情報:\n';
+                logText += `出力日時: ${new Date().toLocaleString('ja-JP')}\n`;
+                logText += `異常検出: ${detectionCount}回\n`;
+                logText += `最大異常度: ${maxAnomalyLevel.toFixed(1)}%\n`;
+                logText += `感度設定: ${['低', '中', '高'][sensitivityLevel]}\n`;
+                logText += `セッション時間: ${sessionDuration}秒\n\n`;
+                
+                logText += '📝 詳細ログ:\n';
+                logText += '--------------------------------------------\n';
+                
+                // ログエントリを時系列順に出力（最新から古い順）
+                detailedLog.forEach(entry => {
+                    const marker = entry.isAnomaly ? '⚠️ [異常]' : 'ℹ️ [情報]';
+                    logText += `${entry.displayTime} ${marker} ${entry.message}\n`;
+                });
+                
+                logText += '\n============================================\n';
+                logText += 'Generated by Spirit Scanner v1.0\n';
+                logText += '============================================';
+
+                // ファイル名の生成
+                const now = new Date();
+                const dateStr = now.toISOString().slice(0, 19).replace(/:/g, '-');
+                const filename = `spirit_scanner_log_${dateStr}.txt`;
+
+                // ファイルダウンロード
+                const blob = new Blob([logText], { type: 'text/plain;charset=utf-8' });
+                const url = URL.createObjectURL(blob);
+                const link = document.createElement('a');
+                
+                link.href = url;
+                link.download = filename;
+                link.style.display = 'none';
+                
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                
+                // メモリ解放
+                URL.revokeObjectURL(url);
+
+                logMessage(`📄 ログファイル出力完了: ${filename}`);
+                
+            } catch (error) {
+                console.error('ログ出力エラー:', error);
+                alert('❌ ログ出力中にエラーが発生しました: ' + error.message);
+                logMessage(`❌ ログ出力エラー: ${error.message}`, true);
+            }
+        }
+
+        // 初期化
+        logMessage('👻 スピリットスキャナー システム起動');
+        logMessage('センサーアクセス許可後、霊的エネルギーの監視を開始');
+    </script>
+</body>
+</html>
